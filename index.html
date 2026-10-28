@@ -16,6 +16,7 @@
 
       --spring: #5c7a4a;
       --summer: #c0572f;
+      --earth: #c9a227;
       --autumn: #b87f8f;
       --winter: #4d6a7a;
     }
@@ -37,7 +38,7 @@
       justify-content: center;
       text-align: center;
       background: linear-gradient(180deg, rgba(20, 24, 18, 0.45), rgba(20, 24, 18, 0.65)),
-                  url("images/hero-etang.jpg") center 55% / cover no-repeat;
+                  url("images/hero-foret.jpg") center 35% / cover no-repeat;
       color: #fdfbf6;
       padding: 2rem 1.5rem;
     }
@@ -143,8 +144,9 @@
     }
 
     .seasons {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
       gap: 1.25rem;
     }
     .season-card {
@@ -153,6 +155,8 @@
       overflow: hidden;
       aspect-ratio: 4 / 5;
       box-shadow: 0 8px 24px rgba(40, 30, 20, 0.12);
+      flex: 1 1 190px;
+      max-width: 220px;
     }
     .season-card img {
       width: 100%;
@@ -183,6 +187,7 @@
     }
     .season-card.spring .season-label .tag { color: #c9e4b5; }
     .season-card.summer .season-label .tag { color: #f3c9a8; }
+    .season-card.earth .season-label .tag { color: #f2e2a8; }
     .season-card.autumn .season-label .tag { color: #f0d6dd; }
     .season-card.winter .season-label .tag { color: #cfe3ec; }
 
@@ -224,7 +229,8 @@
     }
 
     @media (max-width: 560px) {
-      .seasons { grid-template-columns: repeat(2, 1fr); gap: 0.75rem; }
+      .seasons { gap: 0.75rem; }
+      .season-card { flex: 1 1 130px; max-width: 160px; }
       .hero { min-height: 56vh; }
     }
   </style>
@@ -261,10 +267,17 @@
           </div>
         </div>
         <div class="season-card summer">
-          <img src="images/ete-fleur-montagne.jpg" alt="Fleur de montagne en été, symbole de l'élément Feu">
+          <img src="images/ete-plage.jpg" alt="Plage et falaise en été, symbole de l'élément Feu">
           <div class="season-label">
             <span class="name">Été</span>
             <span class="tag">Feu · Vitalité</span>
+          </div>
+        </div>
+        <div class="season-card earth">
+          <img src="images/intersaison-chevaux.jpg" alt="Chevaux dans un champ doré, symbole de l'élément Terre">
+          <div class="season-label">
+            <span class="name">Intersaison</span>
+            <span class="tag">Terre · Ancrage</span>
           </div>
         </div>
         <div class="season-card autumn">
