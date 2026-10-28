@@ -151,18 +151,13 @@
       gap: 1.25rem;
     }
     .season-card {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      flex: 1 1 160px;
-      max-width: 180px;
-    }
-    .season-card .media {
-      width: 100%;
-      aspect-ratio: 1 / 1;
-      border-radius: 50%;
+      position: relative;
+      border-radius: 0.9rem;
       overflow: hidden;
-      box-shadow: 0 8px 24px rgba(40, 30, 20, 0.14);
+      aspect-ratio: 4 / 5;
+      box-shadow: 0 8px 24px rgba(40, 30, 20, 0.12);
+      flex: 1 1 190px;
+      max-width: 220px;
     }
     .season-card img {
       width: 100%;
@@ -173,26 +168,29 @@
     }
     .season-card:hover img { transform: scale(1.06); }
     .season-label {
-      margin-top: 1rem;
+      position: absolute;
+      inset: auto 0 0 0;
+      padding: 1.6rem 1rem 1rem;
+      background: linear-gradient(180deg, transparent, rgba(0,0,0,0.65));
+      color: #fff;
       text-align: center;
     }
     .season-label .name {
-      font-size: 1.1rem;
+      font-size: 1.15rem;
       display: block;
-      color: var(--ink);
     }
     .season-label .tag {
       font-family: system-ui, sans-serif;
       font-size: 0.72rem;
       letter-spacing: 0.1em;
       text-transform: uppercase;
-      color: var(--muted);
+      opacity: 0.85;
     }
-    .season-card.spring .season-label .tag { color: var(--spring); }
-    .season-card.summer .season-label .tag { color: var(--summer); }
-    .season-card.earth .season-label .tag { color: var(--earth); }
-    .season-card.autumn .season-label .tag { color: var(--autumn); }
-    .season-card.winter .season-label .tag { color: var(--winter); }
+    .season-card.spring .season-label .tag { color: #c9e4b5; }
+    .season-card.summer .season-label .tag { color: #f3c9a8; }
+    .season-card.earth .season-label .tag { color: #f2e2a8; }
+    .season-card.autumn .season-label .tag { color: #f0d6dd; }
+    .season-card.winter .season-label .tag { color: #cfe3ec; }
 
     .contact-card {
       background: var(--card);
@@ -263,35 +261,35 @@
       <p class="section-intro">Chaque saison porte sa propre énergie, son propre élément</p>
       <div class="seasons">
         <div class="season-card spring">
-          <div class="media"><img src="images/printemps-rose.jpg" alt="Rose au printemps, symbole de l'élément Bois"></div>
+          <img src="images/printemps-rose.jpg" alt="Rose au printemps, symbole de l'élément Bois">
           <div class="season-label">
             <span class="name">Printemps</span>
             <span class="tag">Bois · Renouveau</span>
           </div>
         </div>
         <div class="season-card summer">
-          <div class="media"><img src="images/ete-coucher-soleil.jpg" alt="Coucher de soleil en été, symbole de l'élément Feu"></div>
+          <img src="images/ete-coucher-soleil.jpg" alt="Coucher de soleil en été, symbole de l'élément Feu">
           <div class="season-label">
             <span class="name">Été</span>
             <span class="tag">Feu · Vitalité</span>
           </div>
         </div>
         <div class="season-card earth">
-          <div class="media"><img src="images/intersaison-chevaux.jpg" alt="Chevaux, symbole de l'élément Terre"></div>
+          <img src="images/intersaison-chevaux.jpg" alt="Chevaux, symbole de l'élément Terre">
           <div class="season-label">
             <span class="name">Intersaison</span>
             <span class="tag">Terre · Ancrage</span>
           </div>
         </div>
         <div class="season-card autumn">
-          <div class="media"><img src="images/automne-fleurs3.jpg" alt="Fleurs d'automne, symbole de l'élément Métal"></div>
+          <img src="images/automne-fleurs3.jpg" alt="Fleurs d'automne, symbole de l'élément Métal">
           <div class="season-label">
             <span class="name">Automne</span>
             <span class="tag">Métal · Intériorité</span>
           </div>
         </div>
         <div class="season-card winter">
-          <div class="media"><img src="images/hiver-givre.jpg" alt="Herbes givrées en hiver, symbole de l'élément Eau"></div>
+          <img src="images/hiver-givre.jpg" alt="Herbes givrées en hiver, symbole de l'élément Eau">
           <div class="season-label">
             <span class="name">Hiver</span>
             <span class="tag">Eau · Repos</span>
