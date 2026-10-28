@@ -146,9 +146,9 @@
 
     .seasons {
       display: flex;
-      flex-wrap: nowrap;
+      flex-wrap: wrap;
       justify-content: center;
-      gap: clamp(0.4rem, 2vw, 1.25rem);
+      gap: 1.25rem;
     }
     .season-card {
       position: relative;
@@ -156,8 +156,7 @@
       overflow: hidden;
       aspect-ratio: 4 / 5;
       box-shadow: 0 8px 24px rgba(40, 30, 20, 0.12);
-      flex: 1 1 0;
-      min-width: 0;
+      flex: 1 1 190px;
       max-width: 220px;
     }
     .season-card img {
@@ -171,20 +170,19 @@
     .season-label {
       position: absolute;
       inset: auto 0 0 0;
-      padding: clamp(0.4rem, 4vw, 1.6rem) 0.2rem 0.5rem;
+      padding: 1.6rem 1rem 1rem;
       background: linear-gradient(180deg, transparent, rgba(0,0,0,0.65));
       color: #fff;
       text-align: center;
     }
     .season-label .name {
-      font-size: clamp(0.56rem, 2.6vw, 1.15rem);
+      font-size: 1.15rem;
       display: block;
-      overflow-wrap: break-word;
     }
     .season-label .tag {
       font-family: system-ui, sans-serif;
-      font-size: clamp(0.4rem, 1.5vw, 0.72rem);
-      letter-spacing: 0.04em;
+      font-size: 0.72rem;
+      letter-spacing: 0.1em;
       text-transform: uppercase;
       opacity: 0.85;
     }
@@ -233,6 +231,8 @@
     }
 
     @media (max-width: 560px) {
+      .seasons { gap: 0.75rem; }
+      .season-card { flex: 1 1 130px; max-width: 160px; }
       .hero { min-height: 56vh; }
     }
   </style>
