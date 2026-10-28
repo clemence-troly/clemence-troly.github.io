@@ -145,12 +145,10 @@
     }
 
     .seasons {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      grid-template-rows: repeat(3, 1fr);
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
       gap: 1.25rem;
-      max-width: 560px;
-      margin: 0 auto;
     }
     .season-card {
       position: relative;
@@ -158,12 +156,9 @@
       overflow: hidden;
       aspect-ratio: 4 / 5;
       box-shadow: 0 8px 24px rgba(40, 30, 20, 0.12);
+      flex: 1 1 190px;
+      max-width: 220px;
     }
-    .season-card.winter { grid-column: 2; grid-row: 1; }
-    .season-card.spring { grid-column: 3; grid-row: 2; }
-    .season-card.summer { grid-column: 2; grid-row: 3; }
-    .season-card.autumn { grid-column: 1; grid-row: 2; }
-    .season-card.earth { grid-column: 2; grid-row: 2; }
     .season-card img {
       width: 100%;
       height: 100%;
@@ -236,17 +231,8 @@
     }
 
     @media (max-width: 560px) {
-      .seasons {
-        grid-template-columns: repeat(2, 1fr);
-        grid-template-rows: repeat(3, 1fr);
-        gap: 0.75rem;
-        max-width: 320px;
-      }
-      .season-card.winter { grid-column: 1; grid-row: 1; }
-      .season-card.spring { grid-column: 2; grid-row: 1; }
-      .season-card.earth { grid-column: 1 / span 2; grid-row: 2; max-width: 150px; margin: 0 auto; }
-      .season-card.autumn { grid-column: 1; grid-row: 3; }
-      .season-card.summer { grid-column: 2; grid-row: 3; }
+      .seasons { gap: 0.75rem; }
+      .season-card { flex: 1 1 130px; max-width: 160px; }
       .hero { min-height: 56vh; }
     }
   </style>
