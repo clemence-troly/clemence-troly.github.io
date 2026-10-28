@@ -3,33 +3,172 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Page de test</title>
+  <title>Clémence Troly — Énergétique traditionnelle chinoise &amp; Acupuncture</title>
   <style>
+    :root {
+      --bg: #faf7f2;
+      --ink: #2e2a26;
+      --muted: #6b6258;
+      --accent: #a8785a;
+      --accent-dark: #8a5f45;
+      --card: #ffffff;
+      --line: #e7ded3;
+    }
+    * { box-sizing: border-box; }
     body {
       margin: 0;
-      height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: #0f172a;
-      color: #f8fafc;
-      font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+      font-family: "Georgia", "Iowan Old Style", serif;
+      background: var(--bg);
+      color: var(--ink);
+      line-height: 1.6;
     }
-    .card {
+    header {
+      padding: 5rem 1.5rem 4rem;
       text-align: center;
-      padding: 2.5rem 3rem;
-      border-radius: 1rem;
-      background: #1e293b;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+      background: linear-gradient(180deg, #f3ece1, var(--bg));
+      border-bottom: 1px solid var(--line);
     }
-    h1 { margin: 0 0 0.5rem; font-size: 2rem; }
-    p { margin: 0; color: #94a3b8; }
+    header .eyebrow {
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      font-size: 0.8rem;
+      color: var(--accent-dark);
+      font-family: system-ui, sans-serif;
+      margin-bottom: 0.75rem;
+    }
+    header h1 {
+      font-size: clamp(2rem, 5vw, 3rem);
+      margin: 0 0 0.75rem;
+      font-weight: 400;
+    }
+    header p.subtitle {
+      font-size: 1.15rem;
+      color: var(--muted);
+      max-width: 36rem;
+      margin: 0 auto;
+    }
+    main {
+      max-width: 44rem;
+      margin: 0 auto;
+      padding: 3.5rem 1.5rem;
+    }
+    section { margin-bottom: 3.5rem; }
+    h2 {
+      font-size: 1.5rem;
+      font-weight: 400;
+      color: var(--accent-dark);
+      border-bottom: 1px solid var(--line);
+      padding-bottom: 0.6rem;
+      margin-bottom: 1.25rem;
+    }
+    .services {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1.25rem;
+    }
+    .service-card {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 0.75rem;
+      padding: 1.5rem;
+    }
+    .service-card h3 {
+      margin: 0 0 0.5rem;
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--ink);
+      font-family: system-ui, sans-serif;
+    }
+    .service-card p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+    .contact-card {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 0.75rem;
+      padding: 1.75rem;
+    }
+    .contact-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      font-family: system-ui, sans-serif;
+    }
+    .contact-list li {
+      display: flex;
+      gap: 0.6rem;
+      padding: 0.5rem 0;
+      border-bottom: 1px dashed var(--line);
+    }
+    .contact-list li:last-child { border-bottom: none; }
+    .contact-list .label {
+      color: var(--muted);
+      min-width: 6rem;
+    }
+    .contact-list a { color: var(--accent-dark); text-decoration: none; }
+    .contact-list a:hover { text-decoration: underline; }
+    footer {
+      text-align: center;
+      padding: 2rem 1.5rem;
+      color: var(--muted);
+      font-family: system-ui, sans-serif;
+      font-size: 0.85rem;
+      border-top: 1px solid var(--line);
+    }
   </style>
 </head>
 <body>
-  <div class="card">
-    <h1>Ca marche !</h1>
-    <p>Page de test hebergee avec succes sur GitHub Pages.</p>
-  </div>
+  <header>
+    <div class="eyebrow">Médecine traditionnelle chinoise</div>
+    <h1>Clémence Troly</h1>
+    <p class="subtitle">Praticienne en énergétique traditionnelle chinoise &amp; acupuncture</p>
+  </header>
+
+  <main>
+    <section>
+      <h2>Présentation</h2>
+      <p>
+        Formée aux principes de la médecine traditionnelle chinoise, j'accompagne chacun
+        vers un meilleur équilibre physique et énergétique grâce à l'acupuncture et aux
+        techniques issues de cette approche millénaire. Mon objectif : vous aider à
+        retrouver vitalité, sérénité et bien-être au quotidien.
+      </p>
+    </section>
+
+    <section>
+      <h2>Mes prestations</h2>
+      <div class="services">
+        <div class="service-card">
+          <h3>Acupuncture</h3>
+          <p>Stimulation de points précis du corps à l'aide d'aiguilles fines pour rétablir la libre circulation de l'énergie (Qi).</p>
+        </div>
+        <div class="service-card">
+          <h3>Bilan énergétique</h3>
+          <p>Évaluation globale de votre état énergétique selon les principes du Yin/Yang et des cinq éléments.</p>
+        </div>
+        <div class="service-card">
+          <h3>Accompagnement du bien-être</h3>
+          <p>Conseils personnalisés (diététique chinoise, hygiène de vie) pour prolonger les bienfaits des séances.</p>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2>Contact</h2>
+      <div class="contact-card">
+        <ul class="contact-list">
+          <li><span class="label">Zone</span><span>Séances à domicile dans la région rouennaise</span></li>
+          <li><span class="label">Téléphone</span><a href="tel:+33617071334">06 17 07 13 34</a></li>
+          <li><span class="label">Email</span><a href="mailto:clemence.troly@gmail.com">clemence.troly@gmail.com</a></li>
+        </ul>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    &copy; 2026 Clémence Troly — Énergétique traditionnelle chinoise &amp; Acupuncture
+  </footer>
 </body>
 </html>
