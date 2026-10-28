@@ -90,28 +90,56 @@
       font-size: 1.08rem;
     }
 
-    .services {
+    .practice {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-      gap: 1.25rem;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.5rem;
     }
-    .service-card {
+    .practice-card {
       background: var(--card);
       border: 1px solid var(--line);
-      border-radius: 0.75rem;
-      padding: 1.5rem;
+      border-radius: 0.9rem;
+      overflow: hidden;
+      box-shadow: 0 6px 18px rgba(40, 30, 20, 0.08);
     }
-    .service-card h3 {
+    .practice-card .media {
+      aspect-ratio: 4 / 3;
+      overflow: hidden;
+      background: #f1e9db;
+    }
+    .practice-card .media img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+    .practice-card .media.illustration {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .practice-card .media.illustration svg {
+      width: 46%;
+      height: 46%;
+    }
+    .practice-card .body {
+      padding: 1.25rem 1.4rem 1.5rem;
+    }
+    .practice-card h3 {
       margin: 0 0 0.5rem;
       font-size: 1.05rem;
       font-weight: 600;
       color: var(--ink);
       font-family: system-ui, sans-serif;
     }
-    .service-card p {
+    .practice-card p {
       margin: 0;
       color: var(--muted);
       font-size: 0.95rem;
+    }
+
+    @media (max-width: 680px) {
+      .practice { grid-template-columns: 1fr; }
     }
 
     .seasons {
@@ -258,20 +286,40 @@
     </section>
 
     <section class="services-section">
-      <h2>Mes prestations</h2>
+      <h2>Pratique</h2>
       <p class="section-intro">Des approches complémentaires au service de votre équilibre</p>
-      <div class="services">
-        <div class="service-card">
-          <h3>Acupuncture</h3>
-          <p>Stimulation de points précis du corps à l'aide d'aiguilles fines pour rétablir la libre circulation de l'énergie (Qi).</p>
+      <div class="practice">
+        <div class="practice-card">
+          <div class="media illustration">
+            <svg viewBox="0 0 100 100" aria-hidden="true">
+              <circle cx="50" cy="50" r="48" fill="#f1e9db" stroke="#7d5a40" stroke-width="1.5"/>
+              <path d="M50,2 A48,48 0 0,1 50,98 A24,24 0 0,1 50,50 A24,24 0 0,0 50,2 Z" fill="#a8785a"/>
+              <circle cx="50" cy="26" r="7" fill="#f1e9db"/>
+              <circle cx="50" cy="74" r="7" fill="#a8785a"/>
+            </svg>
+          </div>
+          <div class="body">
+            <h3>Bilan énergétique</h3>
+            <p>Évaluation globale de votre état énergétique selon les principes du Yin/Yang et des cinq éléments.</p>
+          </div>
         </div>
-        <div class="service-card">
-          <h3>Bilan énergétique</h3>
-          <p>Évaluation globale de votre état énergétique selon les principes du Yin/Yang et des cinq éléments.</p>
+        <div class="practice-card">
+          <div class="media">
+            <img src="images/acupuncture-aiguille.jpg" alt="Aiguille d'acupuncture posée sur la peau">
+          </div>
+          <div class="body">
+            <h3>Acupuncture</h3>
+            <p>Stimulation de points précis du corps à l'aide d'aiguilles fines pour rétablir la libre circulation de l'énergie (Qi).</p>
+          </div>
         </div>
-        <div class="service-card">
-          <h3>Accompagnement du bien-être</h3>
-          <p>Conseils personnalisés (diététique chinoise, hygiène de vie) pour prolonger les bienfaits des séances.</p>
+        <div class="practice-card">
+          <div class="media">
+            <img src="images/tuina-ventouses.jpg" alt="Séance de ventouses sur l'épaule">
+          </div>
+          <div class="body">
+            <h3>Tui Na</h3>
+            <p>Massage traditionnel chinois et techniques complémentaires (ventouses) pour dénouer les tensions et relancer la circulation du Qi.</p>
+          </div>
         </div>
       </div>
     </section>
