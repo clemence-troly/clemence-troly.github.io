@@ -3,64 +3,93 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Clémence Troly — Énergétique traditionnelle chinoise &amp; Acupuncture</title>
+  <title>Clémence Troly — Énergétique traditionnelle chinoise</title>
   <style>
     :root {
-      --bg: #faf7f2;
-      --ink: #2e2a26;
-      --muted: #6b6258;
+      --bg: #faf7f1;
+      --ink: #2e2a24;
+      --muted: #6b6155;
       --accent: #a8785a;
-      --accent-dark: #8a5f45;
+      --accent-dark: #7d5a40;
       --card: #ffffff;
-      --line: #e7ded3;
+      --line: #e6dcce;
+
+      --spring: #5c7a4a;
+      --summer: #c0572f;
+      --autumn: #b87f8f;
+      --winter: #4d6a7a;
     }
     * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
     body {
       margin: 0;
       font-family: "Georgia", "Iowan Old Style", serif;
       background: var(--bg);
       color: var(--ink);
-      line-height: 1.6;
+      line-height: 1.65;
     }
-    header {
-      padding: 5rem 1.5rem 4rem;
+
+    .hero {
+      position: relative;
+      min-height: 68vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
       text-align: center;
-      background: linear-gradient(180deg, #f3ece1, var(--bg));
-      border-bottom: 1px solid var(--line);
+      background: linear-gradient(180deg, rgba(20, 24, 18, 0.45), rgba(20, 24, 18, 0.65)),
+                  url("images/hero-foret.jpg") center 35% / cover no-repeat;
+      color: #fdfbf6;
+      padding: 2rem 1.5rem;
     }
-    header .eyebrow {
-      letter-spacing: 0.15em;
+    .hero .eyebrow {
+      letter-spacing: 0.2em;
       text-transform: uppercase;
-      font-size: 0.8rem;
-      color: var(--accent-dark);
+      font-size: 0.78rem;
       font-family: system-ui, sans-serif;
-      margin-bottom: 0.75rem;
+      opacity: 0.9;
+      margin-bottom: 1rem;
     }
-    header h1 {
-      font-size: clamp(2rem, 5vw, 3rem);
-      margin: 0 0 0.75rem;
+    .hero h1 {
+      font-size: clamp(2.2rem, 6vw, 3.4rem);
+      margin: 0 0 0.9rem;
       font-weight: 400;
+      text-shadow: 0 2px 20px rgba(0,0,0,0.35);
     }
-    header p.subtitle {
-      font-size: 1.15rem;
-      color: var(--muted);
-      max-width: 36rem;
+    .hero p.subtitle {
+      font-size: 1.2rem;
+      max-width: 34rem;
       margin: 0 auto;
+      opacity: 0.95;
     }
+
     main {
-      max-width: 44rem;
+      max-width: 50rem;
       margin: 0 auto;
-      padding: 3.5rem 1.5rem;
+      padding: 4rem 1.5rem;
     }
-    section { margin-bottom: 3.5rem; }
+    section { margin-bottom: 4.5rem; }
+    section:last-of-type { margin-bottom: 2rem; }
+
     h2 {
-      font-size: 1.5rem;
+      font-size: 1.6rem;
       font-weight: 400;
       color: var(--accent-dark);
-      border-bottom: 1px solid var(--line);
-      padding-bottom: 0.6rem;
-      margin-bottom: 1.25rem;
+      text-align: center;
+      margin-bottom: 0.4rem;
     }
+    .section-intro {
+      text-align: center;
+      color: var(--muted);
+      font-size: 0.98rem;
+      max-width: 34rem;
+      margin: 0 auto 2.25rem;
+      font-style: italic;
+    }
+
+    .presentation p {
+      font-size: 1.08rem;
+    }
+
     .services {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
@@ -74,7 +103,7 @@
     }
     .service-card h3 {
       margin: 0 0 0.5rem;
-      font-size: 1.1rem;
+      font-size: 1.05rem;
       font-weight: 600;
       color: var(--ink);
       font-family: system-ui, sans-serif;
@@ -84,11 +113,58 @@
       color: var(--muted);
       font-size: 0.95rem;
     }
+
+    .seasons {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1.25rem;
+    }
+    .season-card {
+      position: relative;
+      border-radius: 0.9rem;
+      overflow: hidden;
+      aspect-ratio: 4 / 5;
+      box-shadow: 0 8px 24px rgba(40, 30, 20, 0.12);
+    }
+    .season-card img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      transition: transform 0.6s ease;
+    }
+    .season-card:hover img { transform: scale(1.06); }
+    .season-label {
+      position: absolute;
+      inset: auto 0 0 0;
+      padding: 1.6rem 1rem 1rem;
+      background: linear-gradient(180deg, transparent, rgba(0,0,0,0.65));
+      color: #fff;
+      text-align: center;
+    }
+    .season-label .name {
+      font-size: 1.15rem;
+      display: block;
+    }
+    .season-label .tag {
+      font-family: system-ui, sans-serif;
+      font-size: 0.72rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      opacity: 0.85;
+    }
+    .season-card.spring .season-label .tag { color: #c9e4b5; }
+    .season-card.summer .season-label .tag { color: #f3c9a8; }
+    .season-card.autumn .season-label .tag { color: #f0d6dd; }
+    .season-card.winter .season-label .tag { color: #cfe3ec; }
+
     .contact-card {
       background: var(--card);
       border: 1px solid var(--line);
-      border-radius: 0.75rem;
+      border-radius: 0.9rem;
       padding: 1.75rem;
+      max-width: 28rem;
+      margin: 0 auto;
     }
     .contact-list {
       list-style: none;
@@ -99,46 +175,91 @@
     .contact-list li {
       display: flex;
       gap: 0.6rem;
-      padding: 0.5rem 0;
+      padding: 0.6rem 0;
       border-bottom: 1px dashed var(--line);
     }
     .contact-list li:last-child { border-bottom: none; }
     .contact-list .label {
       color: var(--muted);
-      min-width: 6rem;
+      min-width: 5rem;
     }
     .contact-list a { color: var(--accent-dark); text-decoration: none; }
     .contact-list a:hover { text-decoration: underline; }
+
     footer {
       text-align: center;
       padding: 2rem 1.5rem;
       color: var(--muted);
       font-family: system-ui, sans-serif;
-      font-size: 0.85rem;
+      font-size: 0.82rem;
       border-top: 1px solid var(--line);
+    }
+
+    @media (max-width: 560px) {
+      .seasons { grid-template-columns: repeat(2, 1fr); gap: 0.75rem; }
+      .hero { min-height: 56vh; }
     }
   </style>
 </head>
 <body>
-  <header>
-    <div class="eyebrow">Médecine traditionnelle chinoise</div>
-    <h1>Clémence Troly</h1>
-    <p class="subtitle">Praticienne en énergétique traditionnelle chinoise &amp; acupuncture</p>
-  </header>
+  <div class="hero">
+    <div>
+      <div class="eyebrow">Médecine traditionnelle chinoise</div>
+      <h1>Clémence Troly</h1>
+      <p class="subtitle">Praticienne en énergétique traditionnelle chinoise</p>
+    </div>
+  </div>
 
   <main>
-    <section>
+    <section class="presentation">
       <h2>Présentation</h2>
+      <p class="section-intro">Retrouver l'équilibre au rythme de la nature</p>
       <p>
         Formée aux principes de la médecine traditionnelle chinoise, j'accompagne chacun
-        vers un meilleur équilibre physique et énergétique grâce à l'acupuncture et aux
-        techniques issues de cette approche millénaire. Mon objectif : vous aider à
-        retrouver vitalité, sérénité et bien-être au quotidien.
+        vers un meilleur équilibre physique et énergétique. Tout comme la nature traverse
+        ses saisons, notre corps connaît ses propres cycles : mon rôle est de vous aider à
+        en retrouver l'harmonie, pour plus de vitalité et de sérénité au quotidien.
       </p>
     </section>
 
-    <section>
+    <section class="seasons-section">
+      <h2>Au rythme des saisons</h2>
+      <p class="section-intro">Chaque saison porte sa propre énergie, son propre élément</p>
+      <div class="seasons">
+        <div class="season-card spring">
+          <img src="images/printemps-rose.jpg" alt="Rose au printemps, symbole de l'élément Bois">
+          <div class="season-label">
+            <span class="name">Printemps</span>
+            <span class="tag">Bois · Renouveau</span>
+          </div>
+        </div>
+        <div class="season-card summer">
+          <img src="images/ete-fleur-montagne.jpg" alt="Fleur de montagne en été, symbole de l'élément Feu">
+          <div class="season-label">
+            <span class="name">Été</span>
+            <span class="tag">Feu · Vitalité</span>
+          </div>
+        </div>
+        <div class="season-card autumn">
+          <img src="images/automne-fleurs.jpg" alt="Fleurs d'automne, symbole de l'élément Métal">
+          <div class="season-label">
+            <span class="name">Automne</span>
+            <span class="tag">Métal · Intériorité</span>
+          </div>
+        </div>
+        <div class="season-card winter">
+          <img src="images/hiver-givre.jpg" alt="Herbes givrées en hiver, symbole de l'élément Eau">
+          <div class="season-label">
+            <span class="name">Hiver</span>
+            <span class="tag">Eau · Repos</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="services-section">
       <h2>Mes prestations</h2>
+      <p class="section-intro">Des approches complémentaires au service de votre équilibre</p>
       <div class="services">
         <div class="service-card">
           <h3>Acupuncture</h3>
@@ -155,11 +276,12 @@
       </div>
     </section>
 
-    <section>
+    <section class="contact-section">
       <h2>Contact</h2>
+      <p class="section-intro">Séances à domicile, dans la région rouennaise</p>
       <div class="contact-card">
         <ul class="contact-list">
-          <li><span class="label">Zone</span><span>Séances à domicile dans la région rouennaise</span></li>
+          <li><span class="label">Zone</span><span>Région rouennaise, à domicile</span></li>
           <li><span class="label">Téléphone</span><a href="tel:+33617071334">06 17 07 13 34</a></li>
           <li><span class="label">Email</span><a href="mailto:clemence.troly@gmail.com">clemence.troly@gmail.com</a></li>
         </ul>
@@ -168,7 +290,7 @@
   </main>
 
   <footer>
-    &copy; 2026 Clémence Troly — Énergétique traditionnelle chinoise &amp; Acupuncture
+    &copy; 2026 Clémence Troly — Énergétique traditionnelle chinoise
   </footer>
 </body>
 </html>

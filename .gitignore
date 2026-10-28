@@ -1,0 +1,5 @@
+# Photos originales non compressées (trop lourdes pour le site, gardées localement)
+*.jpg
+*.JPG
+*.jpeg
+!images/*.jpg
