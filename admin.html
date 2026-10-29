@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Administration — Agenda Clémence Troly</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+  <style>
+    :root {
+      --bg: #faf7f1;
+      --ink: #2e2a24;
+      --muted: #6b6155;
+      --accent: #a8785a;
+      --accent-dark: #7d5a40;
+      --card: #ffffff;
+      --line: #e6dcce;
+      --ok: #5c7a4a;
+      --err: #b3452f;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--ink);
+      line-height: 1.6;
+    }
+    header {
+      text-align: center;
+      padding: 2.5rem 1.5rem 1.5rem;
+    }
+    header h1 {
+      font-family: "Georgia", serif;
+      font-weight: 400;
+      font-size: clamp(1.6rem, 4vw, 2.2rem);
+      color: var(--accent-dark);
+      margin: 0 0 0.3rem;
+    }
+    header p { color: var(--muted); margin: 0; font-size: 0.9rem; }
+    a.back-link {
+      display: inline-block;
+      margin-top: 0.8rem;
+      font-size: 0.85rem;
+      color: var(--accent-dark);
+      text-decoration: none;
+    }
+    a.back-link:hover { text-decoration: underline; }
+
+    main { max-width: 42rem; margin: 0 auto; padding: 0 1.5rem 4rem; }
+
+    #login-section {
+      max-width: 22rem;
+      margin: 2rem auto 0;
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 0.9rem;
+      padding: 1.75rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+    #login-section label { display: flex; flex-direction: column; gap: 0.35rem; font-size: 0.85rem; color: var(--muted); }
+    #login-section input {
+      font-family: inherit;
+      font-size: 0.95rem;
+      padding: 0.6rem 0.75rem;
+      border: 1px solid var(--line);
+      border-radius: 0.5rem;
+      background: var(--bg);
+      color: var(--ink);
+    }
+    button {
+      font-family: inherit;
+      font-size: 0.9rem;
+      border: none;
+      background: var(--accent-dark);
+      color: #fff;
+      padding: 0.6rem 1.4rem;
+      border-radius: 2rem;
+      cursor: pointer;
+    }
+    button:disabled { opacity: 0.6; cursor: not-allowed; }
+    button.secondary {
+      background: transparent;
+      border: 1px solid var(--err);
+      color: var(--err);
+    }
+    #login-error { color: var(--err); font-size: 0.85rem; min-height: 1.2em; }
+
+    #app-section { display: none; flex-direction: column; gap: 2.5rem; }
+    #app-section.visible { display: flex; }
+
+    .top-bar { display: flex; justify-content: space-between; align-items: center; }
+    .top-bar span { color: var(--muted); font-size: 0.85rem; }
+
+    section.panel {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 0.9rem;
+      padding: 1.5rem 1.75rem;
+    }
+    section.panel h2 {
+      font-family: "Georgia", serif;
+      font-weight: 400;
+      font-size: 1.2rem;
+      color: var(--accent-dark);
+      margin: 0 0 1rem;
+    }
+
+    #add-slot-form { display: flex; flex-wrap: wrap; gap: 1rem; align-items: flex-end; }
+    #add-slot-form label { display: flex; flex-direction: column; gap: 0.35rem; font-size: 0.85rem; color: var(--muted); }
+    #add-slot-form input {
+      font-family: inherit;
+      font-size: 0.9rem;
+      padding: 0.55rem 0.7rem;
+      border: 1px solid var(--line);
+      border-radius: 0.5rem;
+      background: var(--bg);
+      color: var(--ink);
+    }
+
+    ul.data-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 0.6rem; }
+    ul.data-list li {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+      padding: 0.7rem 0.9rem;
+      border: 1px solid var(--line);
+      border-radius: 0.6rem;
+      font-size: 0.9rem;
+      flex-wrap: wrap;
+    }
+    ul.data-list li .info { display: flex; flex-direction: column; gap: 0.15rem; }
+    ul.data-list li .info .when { text-transform: capitalize; font-weight: 600; }
+    ul.data-list li .info .detail { color: var(--muted); font-size: 0.85rem; }
+    .empty-note { color: var(--muted); font-size: 0.88rem; }
+
+    #panel-message { font-size: 0.85rem; min-height: 1.2em; }
+    #panel-message.ok { color: var(--ok); }
+    #panel-message.err { color: var(--err); }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Administration de l'agenda</h1>
+    <p>Gestion des créneaux et des rendez-vous</p>
+    <a class="back-link" href="index.html">&larr; Retour au site</a>
+  </header>
+
+  <main>
+    <div id="login-section">
+      <label>Email
+        <input type="email" id="login-email" autocomplete="username">
+      </label>
+      <label>Mot de passe
+        <input type="password" id="login-password" autocomplete="current-password">
+      </label>
+      <button id="login-btn">Se connecter</button>
+      <div id="login-error"></div>
+    </div>
+
+    <div id="app-section">
+      <div class="top-bar">
+        <span id="user-email"></span>
+        <button class="secondary" id="logout-btn">Se déconnecter</button>
+      </div>
+
+      <section class="panel">
+        <h2>Ajouter un créneau</h2>
+        <form id="add-slot-form">
+          <label>Date et heure de début
+            <input type="datetime-local" id="slot-start" required>
+          </label>
+          <label>Durée (minutes)
+            <input type="number" id="slot-duration" value="60" min="15" step="15" required>
+          </label>
+          <button type="submit">Ajouter</button>
+        </form>
+        <p id="panel-message"></p>
+      </section>
+
+      <section class="panel">
+        <h2>Créneaux disponibles</h2>
+        <ul class="data-list" id="open-slots-list"></ul>
+        <p class="empty-note" id="open-slots-empty" style="display:none;">Aucun créneau ouvert pour le moment.</p>
+      </section>
+
+      <section class="panel">
+        <h2>Rendez-vous à venir</h2>
+        <ul class="data-list" id="bookings-list"></ul>
+        <p class="empty-note" id="bookings-empty" style="display:none;">Aucun rendez-vous pour le moment.</p>
+      </section>
+    </div>
+  </main>
+
+  <script>
+    const SUPABASE_URL = "https://lzyuzepgzpljosomrcuv.supabase.co";
+    const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_Ur8bWaPsHhFeb1NvyGYCig_g72WDDN9";
+    const client = supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
+
+    const loginSection = document.getElementById('login-section');
+    const appSection = document.getElementById('app-section');
+    const loginBtn = document.getElementById('login-btn');
+    const loginError = document.getElementById('login-error');
+    const logoutBtn = document.getElementById('logout-btn');
+    const userEmailEl = document.getElementById('user-email');
+    const panelMessage = document.getElementById('panel-message');
+
+    function formatDateTime(iso) {
+      const d = new Date(iso);
+      return d.toLocaleString('fr-FR', {
+        weekday: 'long', day: 'numeric', month: 'long', year: 'numeric',
+        hour: '2-digit', minute: '2-digit'
+      });
+    }
+
+    async function checkSession() {
+      const { data: { session } } = await client.auth.getSession();
+      if (session) {
+        showApp(session);
+      } else {
+        showLogin();
+      }
+    }
+
+    function showLogin() {
+      loginSection.style.display = 'flex';
+      appSection.classList.remove('visible');
+    }
+
+    function showApp(session) {
+      loginSection.style.display = 'none';
+      appSection.classList.add('visible');
+      userEmailEl.textContent = session.user.email;
+      loadOpenSlots();
+      loadBookings();
+    }
+
+    loginBtn.addEventListener('click', async () => {
+      loginError.textContent = '';
+      const email = document.getElementById('login-email').value.trim();
+      const password = document.getElementById('login-password').value;
+      loginBtn.disabled = true;
+      loginBtn.textContent = 'Connexion…';
+      const { data, error } = await client.auth.signInWithPassword({ email, password });
+      loginBtn.disabled = false;
+      loginBtn.textContent = 'Se connecter';
+      if (error) {
+        loginError.textContent = "Identifiants incorrects.";
+        return;
+      }
+      showApp(data.session);
+    });
+
+    logoutBtn.addEventListener('click', async () => {
+      await client.auth.signOut();
+      showLogin();
+    });
+
+    document.getElementById('add-slot-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      panelMessage.textContent = '';
+      panelMessage.className = '';
+      const startVal = document.getElementById('slot-start').value;
+      const duration = parseInt(document.getElementById('slot-duration').value, 10);
+      if (!startVal || !duration) return;
+
+      const start = new Date(startVal);
+      const end = new Date(start.getTime() + duration * 60000);
+
+      const { error } = await client.from('slots').insert({
+        starts_at: start.toISOString(),
+        ends_at: end.toISOString()
+      });
+
+      if (error) {
+        panelMessage.textContent = "Erreur lors de l'ajout du créneau.";
+        panelMessage.className = 'err';
+        console.error(error);
+        return;
+      }
+
+      panelMessage.textContent = 'Créneau ajouté.';
+      panelMessage.className = 'ok';
+      document.getElementById('add-slot-form').reset();
+      document.getElementById('slot-duration').value = 60;
+      loadOpenSlots();
+    });
+
+    async function loadOpenSlots() {
+      const listEl = document.getElementById('open-slots-list');
+      const emptyEl = document.getElementById('open-slots-empty');
+      const { data, error } = await client
+        .from('slots')
+        .select('id, starts_at')
+        .eq('is_booked', false)
+        .order('starts_at', { ascending: true });
+
+      if (error) { console.error(error); return; }
+
+      listEl.innerHTML = '';
+      if (!data || data.length === 0) {
+        emptyEl.style.display = 'block';
+        return;
+      }
+      emptyEl.style.display = 'none';
+
+      data.forEach((slot) => {
+        const li = document.createElement('li');
+        li.innerHTML = `
+          <div class="info"><span class="when">${formatDateTime(slot.starts_at)}</span></div>
+          <button class="secondary" data-id="${slot.id}">Supprimer</button>
+        `;
+        li.querySelector('button').addEventListener('click', async () => {
+          await client.from('slots').delete().eq('id', slot.id);
+          loadOpenSlots();
+        });
+        listEl.appendChild(li);
+      });
+    }
+
+    async function loadBookings() {
+      const listEl = document.getElementById('bookings-list');
+      const emptyEl = document.getElementById('bookings-empty');
+      const { data, error } = await client
+        .from('bookings')
+        .select('id, client_name, client_email, client_phone, note, slot_id, slots(starts_at)')
+        .order('created_at', { ascending: false });
+
+      if (error) { console.error(error); return; }
+
+      listEl.innerHTML = '';
+      if (!data || data.length === 0) {
+        emptyEl.style.display = 'block';
+        return;
+      }
+      emptyEl.style.display = 'none';
+
+      data.forEach((booking) => {
+        const when = booking.slots ? formatDateTime(booking.slots.starts_at) : '(créneau supprimé)';
+        const li = document.createElement('li');
+        li.innerHTML = `
+          <div class="info">
+            <span class="when">${when}</span>
+            <span class="detail">${booking.client_name} — ${booking.client_email}${booking.client_phone ? ' — ' + booking.client_phone : ''}</span>
+            ${booking.note ? `<span class="detail">Note : ${booking.note}</span>` : ''}
+          </div>
+          <button class="secondary" data-id="${booking.id}">Annuler</button>
+        `;
+        li.querySelector('button').addEventListener('click', async () => {
+          await client.from('bookings').delete().eq('id', booking.id);
+          if (booking.slot_id) {
+            await client.from('slots').update({ is_booked: false }).eq('id', booking.slot_id);
+          }
+          loadBookings();
+          loadOpenSlots();
+        });
+        listEl.appendChild(li);
+      });
+    }
+
+    checkSession();
+  </script>
+</body>
+</html>

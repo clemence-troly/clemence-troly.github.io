@@ -62,6 +62,20 @@
       margin: 0 auto;
       opacity: 0.95;
     }
+    .hero .cta {
+      display: inline-block;
+      margin-top: 1.6rem;
+      font-family: system-ui, sans-serif;
+      font-size: 0.95rem;
+      text-decoration: none;
+      color: #fdfbf6;
+      background: var(--accent);
+      padding: 0.75rem 1.8rem;
+      border-radius: 2rem;
+      border: 1px solid rgba(255,255,255,0.4);
+      transition: background 0.2s ease;
+    }
+    .hero .cta:hover { background: var(--accent-dark); }
 
     main {
       max-width: 50rem;
@@ -220,6 +234,18 @@
     }
     .contact-list a { color: var(--accent-dark); text-decoration: none; }
     .contact-list a:hover { text-decoration: underline; }
+    .contact-cta {
+      text-align: center;
+      margin: 1.5rem 0 0;
+      font-family: system-ui, sans-serif;
+      font-size: 0.95rem;
+    }
+    .contact-cta a {
+      color: var(--accent-dark);
+      font-weight: 600;
+      text-decoration: none;
+    }
+    .contact-cta a:hover { text-decoration: underline; }
 
     footer {
       text-align: center;
@@ -242,6 +268,7 @@
     <div>
       <div class="eyebrow">Énergétique traditionnelle chinoise</div>
       <h1>Clémence Troly</h1>
+      <a class="cta" href="rendez-vous.html">Prendre rendez-vous</a>
     </div>
   </div>
 
@@ -340,6 +367,7 @@
           <li><a href="mailto:clemence.troly@gmail.com">clemence.troly@gmail.com</a></li>
         </ul>
       </div>
+      <p class="contact-cta"><a href="rendez-vous.html">Prendre rendez-vous en ligne &rarr;</a></p>
     </section>
   </main>
 

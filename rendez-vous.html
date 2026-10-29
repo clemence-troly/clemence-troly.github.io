@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Prendre rendez-vous — Clémence Troly</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+  <style>
+    :root {
+      --bg: #faf7f1;
+      --ink: #2e2a24;
+      --muted: #6b6155;
+      --accent: #a8785a;
+      --accent-dark: #7d5a40;
+      --card: #ffffff;
+      --line: #e6dcce;
+      --ok: #5c7a4a;
+      --err: #b3452f;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: "Georgia", "Iowan Old Style", serif;
+      background: var(--bg);
+      color: var(--ink);
+      line-height: 1.6;
+    }
+    header.page-hero {
+      text-align: center;
+      padding: 3rem 1.5rem 2rem;
+    }
+    header.page-hero .eyebrow {
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      font-size: 0.75rem;
+      font-family: system-ui, sans-serif;
+      color: var(--muted);
+      margin-bottom: 0.75rem;
+    }
+    header.page-hero h1 {
+      font-size: clamp(1.8rem, 5vw, 2.6rem);
+      font-weight: 400;
+      margin: 0 0 0.6rem;
+      color: var(--accent-dark);
+    }
+    header.page-hero p {
+      color: var(--muted);
+      max-width: 32rem;
+      margin: 0 auto;
+    }
+    a.back-link {
+      display: inline-block;
+      margin-top: 1rem;
+      font-family: system-ui, sans-serif;
+      font-size: 0.85rem;
+      color: var(--accent-dark);
+      text-decoration: none;
+    }
+    a.back-link:hover { text-decoration: underline; }
+
+    main {
+      max-width: 36rem;
+      margin: 0 auto;
+      padding: 0 1.5rem 4rem;
+    }
+
+    #slots-status {
+      text-align: center;
+      color: var(--muted);
+      font-family: system-ui, sans-serif;
+      font-size: 0.95rem;
+      padding: 1rem 0;
+    }
+
+    .slot-list {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+    .slot-item {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 0.75rem;
+      padding: 1rem 1.2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      cursor: pointer;
+      transition: border-color 0.15s ease, box-shadow 0.15s ease;
+      font-family: system-ui, sans-serif;
+    }
+    .slot-item:hover {
+      border-color: var(--accent);
+      box-shadow: 0 4px 14px rgba(40,30,20,0.08);
+    }
+    .slot-item.selected {
+      border-color: var(--accent-dark);
+      background: #fbf3ea;
+    }
+    .slot-item .when {
+      font-size: 0.95rem;
+      text-transform: capitalize;
+    }
+    .slot-item button {
+      font-family: system-ui, sans-serif;
+      font-size: 0.85rem;
+      border: 1px solid var(--accent-dark);
+      background: transparent;
+      color: var(--accent-dark);
+      padding: 0.4rem 0.9rem;
+      border-radius: 2rem;
+      cursor: pointer;
+    }
+    .slot-item.selected button {
+      background: var(--accent-dark);
+      color: #fff;
+    }
+
+    form#booking-form {
+      margin-top: 2rem;
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 0.9rem;
+      padding: 1.75rem;
+      display: none;
+      flex-direction: column;
+      gap: 1rem;
+      font-family: system-ui, sans-serif;
+    }
+    form#booking-form.visible { display: flex; }
+    form#booking-form .chosen-slot {
+      font-size: 0.95rem;
+      color: var(--accent-dark);
+      text-transform: capitalize;
+      padding-bottom: 0.5rem;
+      border-bottom: 1px dashed var(--line);
+    }
+    form#booking-form label {
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+      font-size: 0.85rem;
+      color: var(--muted);
+    }
+    form#booking-form input,
+    form#booking-form textarea {
+      font-family: inherit;
+      font-size: 0.95rem;
+      padding: 0.6rem 0.75rem;
+      border: 1px solid var(--line);
+      border-radius: 0.5rem;
+      background: var(--bg);
+      color: var(--ink);
+    }
+    form#booking-form textarea { resize: vertical; min-height: 4rem; }
+    form#booking-form button[type="submit"] {
+      margin-top: 0.4rem;
+      align-self: center;
+      font-family: system-ui, sans-serif;
+      font-size: 0.95rem;
+      border: none;
+      background: var(--accent-dark);
+      color: #fff;
+      padding: 0.7rem 1.8rem;
+      border-radius: 2rem;
+      cursor: pointer;
+    }
+    form#booking-form button[type="submit"]:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    #form-message {
+      margin-top: 1rem;
+      text-align: center;
+      font-family: system-ui, sans-serif;
+      font-size: 0.9rem;
+    }
+    #form-message.ok { color: var(--ok); }
+    #form-message.err { color: var(--err); }
+
+    footer {
+      text-align: center;
+      padding: 2rem 1.5rem;
+      color: var(--muted);
+      font-family: system-ui, sans-serif;
+      font-size: 0.82rem;
+      border-top: 1px solid var(--line);
+    }
+  </style>
+</head>
+<body>
+  <header class="page-hero">
+    <div class="eyebrow">Énergétique traditionnelle chinoise</div>
+    <h1>Prendre rendez-vous</h1>
+    <p>Choisissez un créneau disponible ci-dessous, puis laissez vos coordonnées pour confirmer votre séance.</p>
+    <a class="back-link" href="index.html">&larr; Retour au site</a>
+  </header>
+
+  <main>
+    <div id="slots-status">Chargement des créneaux disponibles…</div>
+    <ul class="slot-list" id="slot-list"></ul>
+
+    <form id="booking-form">
+      <div class="chosen-slot" id="chosen-slot-label"></div>
+      <label>Nom et prénom
+        <input type="text" id="client_name" required>
+      </label>
+      <label>Email
+        <input type="email" id="client_email" required>
+      </label>
+      <label>Téléphone
+        <input type="tel" id="client_phone">
+      </label>
+      <label>Note (optionnel)
+        <textarea id="note"></textarea>
+      </label>
+      <button type="submit" id="submit-btn">Confirmer le rendez-vous</button>
+    </form>
+
+    <div id="form-message"></div>
+  </main>
+
+  <footer>
+    &copy; 2026 Clémence Troly — Énergétique traditionnelle chinoise
+  </footer>
+
+  <script>
+    const SUPABASE_URL = "https://lzyuzepgzpljosomrcuv.supabase.co";
+    const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_Ur8bWaPsHhFeb1NvyGYCig_g72WDDN9";
+    const client = supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
+
+    const slotListEl = document.getElementById('slot-list');
+    const statusEl = document.getElementById('slots-status');
+    const formEl = document.getElementById('booking-form');
+    const chosenLabelEl = document.getElementById('chosen-slot-label');
+    const messageEl = document.getElementById('form-message');
+    const submitBtn = document.getElementById('submit-btn');
+
+    let selectedSlotId = null;
+
+    function formatSlot(iso) {
+      const d = new Date(iso);
+      return d.toLocaleString('fr-FR', {
+        weekday: 'long', day: 'numeric', month: 'long',
+        hour: '2-digit', minute: '2-digit'
+      });
+    }
+
+    async function loadSlots() {
+      const { data, error } = await client
+        .from('slots')
+        .select('id, starts_at')
+        .eq('is_booked', false)
+        .gt('starts_at', new Date().toISOString())
+        .order('starts_at', { ascending: true });
+
+      if (error) {
+        statusEl.textContent = "Impossible de charger les créneaux pour le moment.";
+        console.error(error);
+        return;
+      }
+
+      if (!data || data.length === 0) {
+        statusEl.textContent = "Aucun créneau disponible pour le moment. Contactez Clémence directement par téléphone ou email.";
+        return;
+      }
+
+      statusEl.textContent = "Sélectionnez un créneau :";
+      slotListEl.innerHTML = '';
+      data.forEach((slot) => {
+        const li = document.createElement('li');
+        li.className = 'slot-item';
+        li.dataset.id = slot.id;
+        li.dataset.when = formatSlot(slot.starts_at);
+        li.innerHTML = `<span class="when">${li.dataset.when}</span><button type="button">Choisir</button>`;
+        li.addEventListener('click', () => selectSlot(li));
+        slotListEl.appendChild(li);
+      });
+    }
+
+    function selectSlot(li) {
+      document.querySelectorAll('.slot-item.selected').forEach(el => el.classList.remove('selected'));
+      li.classList.add('selected');
+      selectedSlotId = li.dataset.id;
+      chosenLabelEl.textContent = 'Créneau choisi : ' + li.dataset.when;
+      formEl.classList.add('visible');
+      messageEl.textContent = '';
+      messageEl.className = '';
+      formEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+
+    formEl.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      if (!selectedSlotId) return;
+
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Envoi en cours…';
+      messageEl.textContent = '';
+      messageEl.className = '';
+
+      const client_name = document.getElementById('client_name').value.trim();
+      const client_email = document.getElementById('client_email').value.trim();
+      const client_phone = document.getElementById('client_phone').value.trim();
+      const note = document.getElementById('note').value.trim();
+
+      const { data, error } = await client_rpc_book(selectedSlotId, client_name, client_email, client_phone, note);
+
+      if (error) {
+        messageEl.textContent = error.message === 'SLOT_UNAVAILABLE' || (error.message && error.message.includes('SLOT_UNAVAILABLE'))
+          ? "Ce créneau vient d'être réservé par quelqu'un d'autre. Merci d'en choisir un autre."
+          : "Une erreur est survenue. Merci de réessayer ou de contacter Clémence directement.";
+        messageEl.className = 'err';
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Confirmer le rendez-vous';
+        await loadSlots();
+        formEl.classList.remove('visible');
+        return;
+      }
+
+      // Fire-and-forget: trigger confirmation + notification emails.
+      fetch(`${SUPABASE_URL}/functions/v1/send-booking-email`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${SUPABASE_PUBLISHABLE_KEY}`,
+          'apikey': SUPABASE_PUBLISHABLE_KEY
+        },
+        body: JSON.stringify({ bookingId: data })
+      }).catch(err => console.error('email trigger failed', err));
+
+      messageEl.textContent = "Votre rendez-vous est confirmé ! Vous allez recevoir un email de confirmation.";
+      messageEl.className = 'ok';
+      formEl.reset();
+      formEl.classList.remove('visible');
+      submitBtn.disabled = false;
+      submitBtn.textContent = 'Confirmer le rendez-vous';
+    });
+
+    async function client_rpc_book(slotId, name, email, phone, note) {
+      return await client.rpc('book_slot', {
+        p_slot_id: slotId,
+        p_name: name,
+        p_email: email,
+        p_phone: phone || null,
+        p_note: note || null
+      });
+    }
+
+    loadSlots();
+  </script>
+</body>
+</html>
