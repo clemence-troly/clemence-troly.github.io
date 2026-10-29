@@ -235,7 +235,14 @@
   <script>
     const SUPABASE_URL = "https://lzyuzepgzpljosomrcuv.supabase.co";
     const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imx6eXV6ZXBnenBsam9zb21yY3V2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTMyNjQ1NjksImV4cCI6MjEwODg0MDU2OX0.kICl5bRc0_JAGi7L0WSmzwG_qtyHHLHqZecU4qE0Jjw";
-    const client = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    // Cette page est publique et ne doit jamais utiliser une session admin
+    // éventuellement restée connectée dans le même navigateur (même origine
+    // que admin.html) : sinon Supabase enverrait ce jeton "authenticated"
+    // au lieu de la clé anonyme, et book_slot (réservé au rôle anon) serait
+    // refusé avec une erreur de permission.
+    const client = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+      auth: { persistSession: false, autoRefreshToken: false, detectSessionInUrl: false }
+    });
 
     const slotListEl = document.getElementById('slot-list');
     const statusEl = document.getElementById('slots-status');
