@@ -134,7 +134,29 @@
     ul.data-list li .info { display: flex; flex-direction: column; gap: 0.15rem; }
     ul.data-list li .info .when { text-transform: capitalize; font-weight: 600; }
     ul.data-list li .info .detail { color: var(--muted); font-size: 0.85rem; }
+    ul.data-list li .actions { display: flex; gap: 0.5rem; }
+    ul.data-list li .actions button { padding: 0.45rem 1rem; font-size: 0.85rem; }
     .empty-note { color: var(--muted); font-size: 0.88rem; }
+
+    .edit-slot-form {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      align-items: flex-end;
+      width: 100%;
+    }
+    .edit-slot-form label { display: flex; flex-direction: column; gap: 0.3rem; font-size: 0.8rem; color: var(--muted); }
+    .edit-slot-form input {
+      font-family: inherit;
+      font-size: 0.88rem;
+      padding: 0.5rem 0.65rem;
+      border: 1px solid var(--line);
+      border-radius: 0.5rem;
+      background: var(--bg);
+      color: var(--ink);
+    }
+    .edit-slot-form .actions { display: flex; gap: 0.5rem; }
+    .edit-slot-form button[type="submit"] { padding: 0.5rem 1.2rem; font-size: 0.85rem; }
 
     #panel-message { font-size: 0.85rem; min-height: 1.2em; }
     #panel-message.ok { color: var(--ok); }
@@ -215,6 +237,16 @@
       });
     }
 
+    function toDatetimeLocalValue(iso) {
+      const d = new Date(iso);
+      const pad = (n) => String(n).padStart(2, '0');
+      return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+    }
+
+    function minutesBetween(startIso, endIso) {
+      return Math.round((new Date(endIso) - new Date(startIso)) / 60000);
+    }
+
     async function checkSession() {
       const { data: { session } } = await client.auth.getSession();
       if (session) {
@@ -293,7 +325,7 @@
       const emptyEl = document.getElementById('open-slots-empty');
       const { data, error } = await client
         .from('slots')
-        .select('id, starts_at')
+        .select('id, starts_at, ends_at')
         .eq('is_booked', false)
         .order('starts_at', { ascending: true });
 
@@ -310,13 +342,70 @@
         const li = document.createElement('li');
         li.innerHTML = `
           <div class="info"><span class="when">${formatDateTime(slot.starts_at)}</span></div>
-          <button class="secondary" data-id="${slot.id}">Supprimer</button>
+          <div class="actions">
+            <button data-action="edit" data-id="${slot.id}">Modifier</button>
+            <button class="secondary" data-action="delete" data-id="${slot.id}">Supprimer</button>
+          </div>
         `;
-        li.querySelector('button').addEventListener('click', async () => {
+
+        li.querySelector('[data-action="delete"]').addEventListener('click', async () => {
           await client.from('slots').delete().eq('id', slot.id);
           loadOpenSlots();
         });
+
+        li.querySelector('[data-action="edit"]').addEventListener('click', () => {
+          openSlotEditor(li, slot);
+        });
+
         listEl.appendChild(li);
+      });
+    }
+
+    function openSlotEditor(li, slot) {
+      const duration = minutesBetween(slot.starts_at, slot.ends_at) || 60;
+      li.innerHTML = `
+        <form class="edit-slot-form">
+          <label>Date et heure de début
+            <input type="datetime-local" class="edit-start" value="${toDatetimeLocalValue(slot.starts_at)}" required>
+          </label>
+          <label>Durée (minutes)
+            <input type="number" class="edit-duration" value="${duration}" min="15" step="15" required>
+          </label>
+          <div class="actions">
+            <button type="submit">Enregistrer</button>
+            <button type="button" class="secondary edit-cancel">Annuler</button>
+          </div>
+        </form>
+      `;
+
+      li.querySelector('.edit-cancel').addEventListener('click', () => {
+        loadOpenSlots();
+      });
+
+      li.querySelector('form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const startVal = li.querySelector('.edit-start').value;
+        const durationVal = parseInt(li.querySelector('.edit-duration').value, 10);
+        if (!startVal || !durationVal) return;
+
+        const start = new Date(startVal);
+        const end = new Date(start.getTime() + durationVal * 60000);
+
+        const { error } = await client
+          .from('slots')
+          .update({ starts_at: start.toISOString(), ends_at: end.toISOString() })
+          .eq('id', slot.id);
+
+        if (error) {
+          panelMessage.textContent = "Erreur lors de la modification du créneau.";
+          panelMessage.className = 'err';
+          console.error(error);
+          return;
+        }
+
+        panelMessage.textContent = 'Créneau modifié.';
+        panelMessage.className = 'ok';
+        loadOpenSlots();
       });
     }
 
