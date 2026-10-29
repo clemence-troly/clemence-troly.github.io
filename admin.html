@@ -240,7 +240,7 @@
     loginBtn.addEventListener('click', async () => {
       loginError.textContent = '';
       const email = document.getElementById('login-email').value.trim();
-      const password = document.getElementById('login-password').value;
+      const password = document.getElementById('login-password').value.trim();
       loginBtn.disabled = true;
       loginBtn.textContent = 'Connexion…';
       const { data, error } = await client.auth.signInWithPassword({ email, password });
