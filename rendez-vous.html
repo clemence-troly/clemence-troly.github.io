@@ -344,7 +344,7 @@
         body: JSON.stringify({ bookingId: data, action: 'request' })
       }).catch(err => console.error('email trigger failed', err));
 
-      messageEl.textContent = "Votre demande a bien été envoyée ! Clémence va la valider et vous recevrez un email de confirmation.";
+      messageEl.textContent = "Votre demande a bien été envoyée ! Vous recevrez un email de confirmation après validation.";
       messageEl.className = 'ok';
       formEl.reset();
       formEl.classList.remove('visible');
