@@ -432,7 +432,7 @@
       return lines.join('');
     }
 
-    async function notifyClient(bookingId) {
+    async function notifyClient(bookingId, action) {
       try {
         await fetch(`${SUPABASE_URL}/functions/v1/send-booking-email`, {
           method: 'POST',
@@ -441,10 +441,10 @@
             'Authorization': `Bearer ${SUPABASE_PUBLISHABLE_KEY}`,
             'apikey': SUPABASE_PUBLISHABLE_KEY
           },
-          body: JSON.stringify({ bookingId, action: 'confirm' })
+          body: JSON.stringify({ bookingId, action })
         });
       } catch (err) {
-        console.error('confirmation email trigger failed', err);
+        console.error(action + ' email trigger failed', err);
       }
     }
 
@@ -482,7 +482,7 @@
 
         li.querySelector('[data-action="confirm"]').addEventListener('click', async () => {
           await client.from('bookings').update({ status: 'confirmed' }).eq('id', booking.id);
-          await notifyClient(booking.id);
+          await notifyClient(booking.id, 'confirm');
           loadPendingBookings();
           loadBookings();
         });
@@ -529,6 +529,9 @@
           <button class="secondary" data-id="${booking.id}">Annuler</button>
         `;
         li.querySelector('button').addEventListener('click', async () => {
+          // Envoyer l'email d'annulation AVANT de supprimer la réservation,
+          // car la fonction d'envoi a besoin de retrouver la ligne en base.
+          await notifyClient(booking.id, 'cancel');
           await client.from('bookings').delete().eq('id', booking.id);
           if (booking.slot_id) {
             await client.from('slots').update({ is_booked: false }).eq('id', booking.slot_id);
