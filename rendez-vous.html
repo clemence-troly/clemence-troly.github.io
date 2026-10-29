@@ -234,8 +234,8 @@
 
   <script>
     const SUPABASE_URL = "https://lzyuzepgzpljosomrcuv.supabase.co";
-    const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_Ur8bWaPsHhFeb1NvyGYCig_g72WDDN9";
-    const client = supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
+    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imx6eXV6ZXBnenBsam9zb21yY3V2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTMyNjQ1NjksImV4cCI6MjEwODg0MDU2OX0.kICl5bRc0_JAGi7L0WSmzwG_qtyHHLHqZecU4qE0Jjw";
+    const client = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
     const slotListEl = document.getElementById('slot-list');
     const statusEl = document.getElementById('slots-status');
@@ -331,8 +331,8 @@
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${SUPABASE_PUBLISHABLE_KEY}`,
-          'apikey': SUPABASE_PUBLISHABLE_KEY
+          'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+          'apikey': SUPABASE_ANON_KEY
         },
         body: JSON.stringify({ bookingId: data, action: 'request' })
       }).catch(err => console.error('email trigger failed', err));
