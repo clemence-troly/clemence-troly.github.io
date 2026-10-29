@@ -138,6 +138,9 @@
     ul.data-list li .actions button { padding: 0.45rem 1rem; font-size: 0.85rem; }
     .empty-note { color: var(--muted); font-size: 0.88rem; }
 
+    button.confirm-btn { background: var(--ok); }
+
+
     .edit-slot-form {
       display: flex;
       flex-wrap: wrap;
@@ -209,9 +212,15 @@
       </section>
 
       <section class="panel">
-        <h2>Rendez-vous à venir</h2>
+        <h2>Demandes en attente de validation</h2>
+        <ul class="data-list" id="pending-list"></ul>
+        <p class="empty-note" id="pending-empty" style="display:none;">Aucune demande en attente.</p>
+      </section>
+
+      <section class="panel">
+        <h2>Rendez-vous confirmés</h2>
         <ul class="data-list" id="bookings-list"></ul>
-        <p class="empty-note" id="bookings-empty" style="display:none;">Aucun rendez-vous pour le moment.</p>
+        <p class="empty-note" id="bookings-empty" style="display:none;">Aucun rendez-vous confirmé pour le moment.</p>
       </section>
     </div>
   </main>
@@ -266,6 +275,7 @@
       appSection.classList.add('visible');
       userEmailEl.textContent = session.user.email;
       loadOpenSlots();
+      loadPendingBookings();
       loadBookings();
     }
 
@@ -409,12 +419,42 @@
       });
     }
 
-    async function loadBookings() {
-      const listEl = document.getElementById('bookings-list');
-      const emptyEl = document.getElementById('bookings-empty');
+    function bookingDetailLines(booking) {
+      const lines = [
+        `<span class="detail">${booking.client_name} — ${booking.client_email}${booking.client_phone ? ' — ' + booking.client_phone : ''}</span>`
+      ];
+      if (booking.location) {
+        lines.push(`<span class="detail">Secteur : ${booking.location}</span>`);
+      }
+      if (booking.note) {
+        lines.push(`<span class="detail">Note : ${booking.note}</span>`);
+      }
+      return lines.join('');
+    }
+
+    async function notifyClient(bookingId) {
+      try {
+        await fetch(`${SUPABASE_URL}/functions/v1/send-booking-email`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${SUPABASE_PUBLISHABLE_KEY}`,
+            'apikey': SUPABASE_PUBLISHABLE_KEY
+          },
+          body: JSON.stringify({ bookingId, action: 'confirm' })
+        });
+      } catch (err) {
+        console.error('confirmation email trigger failed', err);
+      }
+    }
+
+    async function loadPendingBookings() {
+      const listEl = document.getElementById('pending-list');
+      const emptyEl = document.getElementById('pending-empty');
       const { data, error } = await client
         .from('bookings')
-        .select('id, client_name, client_email, client_phone, note, slot_id, slots(starts_at)')
+        .select('id, client_name, client_email, client_phone, location, note, slot_id, status, slots(starts_at)')
+        .eq('status', 'pending')
         .order('created_at', { ascending: false });
 
       if (error) { console.error(error); return; }
@@ -432,8 +472,59 @@
         li.innerHTML = `
           <div class="info">
             <span class="when">${when}</span>
-            <span class="detail">${booking.client_name} — ${booking.client_email}${booking.client_phone ? ' — ' + booking.client_phone : ''}</span>
-            ${booking.note ? `<span class="detail">Note : ${booking.note}</span>` : ''}
+            ${bookingDetailLines(booking)}
+          </div>
+          <div class="actions">
+            <button class="confirm-btn" data-action="confirm">Confirmer</button>
+            <button class="secondary" data-action="decline">Refuser</button>
+          </div>
+        `;
+
+        li.querySelector('[data-action="confirm"]').addEventListener('click', async () => {
+          await client.from('bookings').update({ status: 'confirmed' }).eq('id', booking.id);
+          await notifyClient(booking.id);
+          loadPendingBookings();
+          loadBookings();
+        });
+
+        li.querySelector('[data-action="decline"]').addEventListener('click', async () => {
+          await client.from('bookings').update({ status: 'declined' }).eq('id', booking.id);
+          if (booking.slot_id) {
+            await client.from('slots').update({ is_booked: false }).eq('id', booking.slot_id);
+          }
+          loadPendingBookings();
+          loadOpenSlots();
+        });
+
+        listEl.appendChild(li);
+      });
+    }
+
+    async function loadBookings() {
+      const listEl = document.getElementById('bookings-list');
+      const emptyEl = document.getElementById('bookings-empty');
+      const { data, error } = await client
+        .from('bookings')
+        .select('id, client_name, client_email, client_phone, location, note, slot_id, status, slots(starts_at)')
+        .eq('status', 'confirmed')
+        .order('created_at', { ascending: false });
+
+      if (error) { console.error(error); return; }
+
+      listEl.innerHTML = '';
+      if (!data || data.length === 0) {
+        emptyEl.style.display = 'block';
+        return;
+      }
+      emptyEl.style.display = 'none';
+
+      data.forEach((booking) => {
+        const when = booking.slots ? formatDateTime(booking.slots.starts_at) : '(créneau supprimé)';
+        const li = document.createElement('li');
+        li.innerHTML = `
+          <div class="info">
+            <span class="when">${when}</span>
+            ${bookingDetailLines(booking)}
           </div>
           <button class="secondary" data-id="${booking.id}">Annuler</button>
         `;

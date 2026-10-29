@@ -197,7 +197,7 @@
   <header class="page-hero">
     <div class="eyebrow">Énergétique traditionnelle chinoise</div>
     <h1>Prendre rendez-vous</h1>
-    <p>Choisissez un créneau disponible ci-dessous, puis laissez vos coordonnées pour confirmer votre séance.</p>
+    <p>Choisissez un créneau disponible ci-dessous, puis laissez vos coordonnées. Clémence valide chaque demande avant confirmation définitive.</p>
     <a class="back-link" href="index.html">&larr; Retour au site</a>
   </header>
 
@@ -216,10 +216,13 @@
       <label>Téléphone
         <input type="tel" id="client_phone">
       </label>
+      <label>Ville / secteur (pour le déplacement à domicile)
+        <input type="text" id="location" placeholder="ex : Rouen centre" required>
+      </label>
       <label>Note (optionnel)
         <textarea id="note"></textarea>
       </label>
-      <button type="submit" id="submit-btn">Confirmer le rendez-vous</button>
+      <button type="submit" id="submit-btn">Demander un rendez-vous</button>
     </form>
 
     <div id="form-message"></div>
@@ -306,9 +309,10 @@
       const client_name = document.getElementById('client_name').value.trim();
       const client_email = document.getElementById('client_email').value.trim();
       const client_phone = document.getElementById('client_phone').value.trim();
+      const location = document.getElementById('location').value.trim();
       const note = document.getElementById('note').value.trim();
 
-      const { data, error } = await client_rpc_book(selectedSlotId, client_name, client_email, client_phone, note);
+      const { data, error } = await client_rpc_book(selectedSlotId, client_name, client_email, client_phone, location, note);
 
       if (error) {
         messageEl.textContent = error.message === 'SLOT_UNAVAILABLE' || (error.message && error.message.includes('SLOT_UNAVAILABLE'))
@@ -316,13 +320,13 @@
           : "Une erreur est survenue. Merci de réessayer ou de contacter Clémence directement.";
         messageEl.className = 'err';
         submitBtn.disabled = false;
-        submitBtn.textContent = 'Confirmer le rendez-vous';
+        submitBtn.textContent = 'Demander un rendez-vous';
         await loadSlots();
         formEl.classList.remove('visible');
         return;
       }
 
-      // Fire-and-forget: trigger confirmation + notification emails.
+      // Fire-and-forget: notify Clémence so she can validate the request.
       fetch(`${SUPABASE_URL}/functions/v1/send-booking-email`, {
         method: 'POST',
         headers: {
@@ -330,23 +334,24 @@
           'Authorization': `Bearer ${SUPABASE_PUBLISHABLE_KEY}`,
           'apikey': SUPABASE_PUBLISHABLE_KEY
         },
-        body: JSON.stringify({ bookingId: data })
+        body: JSON.stringify({ bookingId: data, action: 'request' })
       }).catch(err => console.error('email trigger failed', err));
 
-      messageEl.textContent = "Votre rendez-vous est confirmé ! Vous allez recevoir un email de confirmation.";
+      messageEl.textContent = "Votre demande a bien été envoyée ! Clémence va la valider et vous recevrez un email de confirmation.";
       messageEl.className = 'ok';
       formEl.reset();
       formEl.classList.remove('visible');
       submitBtn.disabled = false;
-      submitBtn.textContent = 'Confirmer le rendez-vous';
+      submitBtn.textContent = 'Demander un rendez-vous';
     });
 
-    async function client_rpc_book(slotId, name, email, phone, note) {
+    async function client_rpc_book(slotId, name, email, phone, location, note) {
       return await client.rpc('book_slot', {
         p_slot_id: slotId,
         p_name: name,
         p_email: email,
         p_phone: phone || null,
+        p_location: location || null,
         p_note: note || null
       });
     }
