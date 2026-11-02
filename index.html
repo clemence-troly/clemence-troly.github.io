@@ -119,15 +119,16 @@
       box-shadow: 0 6px 18px rgba(40, 30, 20, 0.08);
     }
     .practice-card .media {
-      aspect-ratio: 4 / 3;
       overflow: hidden;
       background: #f1e9db;
     }
     .practice-card .media img {
       width: 100%;
-      height: 100%;
-      object-fit: contain;
+      height: auto;
       display: block;
+    }
+    .practice-card .media.illustration {
+      aspect-ratio: 4 / 3;
     }
     .practice-card .media.illustration {
       display: flex;
