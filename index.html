@@ -139,6 +139,14 @@
       width: 46%;
       height: 46%;
     }
+    .practice-card .media.crop-bottom {
+      aspect-ratio: 1 / 1;
+    }
+    .practice-card .media.crop-bottom img {
+      height: 100%;
+      object-fit: cover;
+      object-position: center bottom;
+    }
     .practice-card .body {
       padding: 1.25rem 1.4rem 1.5rem;
     }
@@ -340,7 +348,7 @@
           </div>
         </div>
         <div class="practice-card">
-          <div class="media">
+          <div class="media crop-bottom">
             <img src="images/acupuncture.jpg" alt="Séance d'acupuncture">
           </div>
           <div class="body">
